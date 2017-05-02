@@ -12,6 +12,7 @@
         <script src="../Common/three.js"></script>
         <script src="../Common/TrackballControls.js"></script>
 		<script src="../Common/stats.min.js.download"></script>
+        <script src="../Common/dat.gui.min.js"></script>
 
 
         <script>
@@ -23,9 +24,8 @@
                 container,
                 stats;
 
-            var sideLength = 10,
-                objectType = 0;
-                useRotation = false;
+            var sideLength = 3,
+                useRotation = true;
          
 
             init();
@@ -45,17 +45,8 @@
 
                 scene = new THREE.Scene();
                 
-                switch(objectType)
-                {
-                    case 0:
-                        modelGrid();
-                        break;
-                    case 1:
-                        panelGrid();
-                        break;
-                    default:
-                        modelGrid();
-                }
+                CatGrid();
+
                 
                 renderer = new THREE.WebGLRenderer();
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -71,8 +62,7 @@
 
 
             function animate()
-            {
-                
+            {  
                 requestAnimationFrame(animate);
 
                 controls.update();                
@@ -91,11 +81,9 @@
 
             function render()
             {
-                
-
                 if (useRotation)
                 {
-                    requestAnimationFrame(render);
+                    
 
                     for (var i = 0, l = objects.length; i < l; i++)
                     {
@@ -106,7 +94,7 @@
                     }
                 }
 
-                
+                requestAnimationFrame(render);
 
                 renderer.render( scene, camera );
 
@@ -114,17 +102,17 @@
             }
 
 
-            function modelGrid()
+            function CatGrid()
             {
                 for (var z = 0; z < sideLength; z++) {
                     for (var y = 0; y < sideLength; y++) {
                         for (var x = 0; x < sideLength; x++) {
-                            //var geometry = new THREE.OctahedronBufferGeometry(25, 0);
-                            var geometry = new THREE.BoxGeometry(50, 50, 50);
+                           
+                            var geometry = new THREE.BoxBufferGeometry(50, 50, 50);
 
-                            var colorsegment = 255 / sideLength / 150;
-                            var color = new THREE.Color(x * colorsegment, y * colorsegment, z * colorsegment);
-                            var material = new THREE.MeshBasicMaterial({ color: color, transparent: true, blending: THREE.AdditiveBlending });
+                            var texture = new THREE.TextureLoader().load('images/image.png');
+                           
+                            var material = new THREE.MeshBasicMaterial({ map: texture });
 
                             var mesh = new THREE.Mesh(geometry, material);
 
@@ -137,36 +125,6 @@
                                 mesh.rotation.y = Math.random();
                                 mesh.rotation.z = Math.random();
                             }                            
-
-                            scene.add(mesh);
-                            objects.push(mesh);
-                        }
-                    }
-                }
-            }
-
-
-            function panelGrid() {
-                for (var z = 0; z < sideLength; z++) {
-                    for (var y = 0; y < sideLength; y++) {
-                        for (var x = 0; x < sideLength; x++) {
-                            var geometry = new THREE.PlaneGeometry(50, 50, 0, 0);
-
-                            var colorsegment = 255 / sideLength / 150;
-                            var color = new THREE.Color(x * colorsegment, y * colorsegment, z * colorsegment);
-                            var material = new THREE.MeshBasicMaterial({ color: color, transparent: true, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-
-                            var mesh = new THREE.Mesh(geometry, material);
-
-                            mesh.position.x = (x % sideLength) * 200 - ((sideLength * 100) - 100);
-                            mesh.position.y = (y % sideLength) * 200 - ((sideLength * 100) - 100);
-                            mesh.position.z = (z % sideLength) * 200 - ((sideLength * 100) - 100);
-
-                            if (useRotation) {
-                                mesh.rotation.x = Math.random();
-                                mesh.rotation.y = Math.random();
-                                mesh.rotation.z = Math.random();
-                            }
 
                             scene.add(mesh);
                             objects.push(mesh);
